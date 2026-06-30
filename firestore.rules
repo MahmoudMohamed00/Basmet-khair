@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // -------------------------------------------------------------------------
+    // Helper Functions
+    // -------------------------------------------------------------------------
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      // Admin is the developer or specifically authorized in the admins collection
+      return isSignedIn() && (
+        request.auth.token.email == '11gawish2004@gmail.com' ||
+        request.auth.token.email == 'ma0277303@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // -------------------------------------------------------------------------
+    // Collection Rules
+    // -------------------------------------------------------------------------
+
+    match /admins/{id} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Default Allow for all signed in users for standard app collections
+    match /schools/{id} { allow read, write: if isSignedIn(); }
+    match /top_students/{id} { allow read, write: if isSignedIn(); }
+    match /cases/{id} { allow read, write: if isSignedIn(); }
+    match /medicalCases/{id} { allow read, write: if isSignedIn(); }
+    match /marriageCases/{id} { allow read, write: if isSignedIn(); }
+    match /donors/{id} { allow read, write: if isSignedIn(); }
+    match /volunteers/{id} { allow read, write: if isSignedIn(); }
+    match /campaigns/{id} { allow read, write: if isSignedIn(); }
+    match /activities/{id} { allow read, write: if isSignedIn(); }
+    match /news/{id} { allow read, write: if isSignedIn(); }
+    match /logs/{id} { allow read, write: if isSignedIn(); }
+    match /orphans/{id} { allow read, write: if isSignedIn(); }
+    match /new_orphan_registrations/{id} { allow read, write: if isSignedIn(); }
+    match /parties/{id} { allow read, write: if isSignedIn(); }
+    match /reception_cases/{id} { allow read, write: if isSignedIn(); }
+    match /seasonal_cases/{id} { allow read, write: if isSignedIn(); }
+    match /seasonal_distributions/{id} { 
+      allow read, write: if isSignedIn(); 
+      match /beneficiaries/{benId} { allow read, write: if isSignedIn(); }
+    }
+    match /employees/{id} { allow read, write: if isSignedIn(); }
+    match /about_documents/{id} { allow read, write: if isSignedIn(); }
+    match /distributionLists/{id} { 
+      allow read, write: if isSignedIn(); 
+      match /items/{itemId} { allow read, write: if isSignedIn(); }
+    }
+    
+    // Financials
+    match /sponsorship_donors/{id} { allow read, write: if isSignedIn(); }
+    match /sponsorship_payments/{id} { allow read, write: if isSignedIn(); }
+    match /financial_records/{id} { allow read, write: if isSignedIn(); }
+    match /financial_accounts/{id} { allow read, write: if isSignedIn(); }
+    match /account_transactions/{id} { allow read, write: if isSignedIn(); }
+    match /financial_operations/{id} { allow read, write: if isSignedIn(); }
+    match /account_transfers/{id} { allow read, write: if isSignedIn(); }
+    match /monthly_goals/{id} { allow read, write: if isSignedIn(); }
+    match /app_users/{id} { allow read, write: if isSignedIn(); }
+    match /sacrifice_coupons/{id} { allow read, write: if isSignedIn(); }
+    match /ramadan_campaign/{id} { allow read, write: if isSignedIn(); }
+    match /users_config/{email} { allow read: if isSignedIn(); allow write: if isAdmin(); }
+    match /monthly_payroll_lists/{id} { allow read, write: if isSignedIn(); }
+    match /incoming_donations/{id} { allow read, write: if isSignedIn(); }
+    match /outgoing_donations/{id} { allow read, write: if isSignedIn(); }
+    match /monthly_sponsorships/{id} { allow read, write: if isSignedIn(); }
+
+    // Settings
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // Collection Group Rules for medical subcollections and results
+    match /{path=**}/prescriptions/{id} { allow read, write: if isSignedIn(); }
+    match /{path=**}/surgeries/{id} { allow read, write: if isSignedIn(); }
+    match /{path=**}/labTests/{id} { allow read, write: if isSignedIn(); }
+    match /{path=**}/radiology/{id} { allow read, write: if isSignedIn(); }
+    match /{path=**}/periodic_research/{id} { allow read, write: if isSignedIn(); }
+
+    // Document Specific Rules within subcollections (for depth)
+    match /medicalCases/{caseId}/prescriptions/{id} { allow read, write: if isSignedIn(); }
+    match /medicalCases/{caseId}/surgeries/{id} { allow read, write: if isSignedIn(); }
+    match /medicalCases/{caseId}/labTests/{id} { allow read, write: if isSignedIn(); }
+    match /medicalCases/{caseId}/radiology/{id} { allow read, write: if isSignedIn(); }
+
+    // -------------------------------------------------------------------------
+    // Global Safety Net
+    // -------------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

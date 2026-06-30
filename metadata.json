@@ -1,0 +1,6 @@
+{
+  "name": "جمعية بصمة خير",
+  "description": "تطبيق لإدارة الحالات، المتبرعين، والأنشطة لجمعية بصمة خير الخيرية",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

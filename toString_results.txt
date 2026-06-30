@@ -1,0 +1,19 @@
+src/components/MedicalModal.tsx:                        <FormInput type="number" label="التكلفة" value={surgeryForm.cost.toString()} onChange={val => setSurgeryForm({...surgeryForm, cost: Number(val)})} icon={<Database className="w-4 h-4" />} />
+src/components/PartiesScreen.tsx:                    value={formData.cost.toString()}
+src/components/PartiesScreen.tsx:                    value={formData.attendeesCount.toString()}
+src/components/PartiesScreen.tsx:                    value={formData.volunteersCount.toString()}
+src/components/CasesScreen.tsx:                      value={formData.familyCount.toString()}
+src/components/CasesScreen.tsx:                        value={formData.monthlyAmount?.toString() || ''}
+src/components/CasesScreen.tsx:                      value={formData.familyCount.toString()}
+src/components/CasesScreen.tsx:                        value={formData.monthlyAmount?.toString() || ''}
+src/components/VolunteersScreen.tsx:    return `VOL-${(lastCode + 1).toString().padStart(4, '0')}`;
+src/components/DonorsScreen.tsx:                      value={formData.totalDonations.toString()}
+src/components/SeasonalCasesScreen.tsx:                    value={(beneficiaryFormData.familyCount ?? 1).toString()}
+src/components/SeasonalCasesScreen.tsx:                    value={(beneficiaryFormData.quantity ?? 1).toString()}
+src/components/SponsorshipsScreen.tsx:      income: (item.paymentIncome ?? item.amount).toString(),
+src/components/SponsorshipsScreen.tsx:      expenses: (item.paymentExpenses ?? 0).toString(),
+src/components/SponsorshipsScreen.tsx:                                 amount: item.amount.toString(),
+src/App.tsx:        <StatCard title="إجمالي الحالات" value={stats.cases.toString()} icon={<Users className="w-6 h-6 text-emerald-600" />} color="bg-white" />
+src/App.tsx:        <StatCard title="المتبرعين" value={stats.donors.toString()} icon={<Heart className="w-6 h-6 text-rose-600" />} color="bg-white" />
+src/App.tsx:        <StatCard title="المتطوعين" value={stats.volunteers.toString()} icon={<UserCheck className="w-6 h-6 text-blue-600" />} color="bg-white" />
+src/App.tsx:        <StatCard title="الحملات" value={stats.campaigns.toString()} icon={<Megaphone className="w-6 h-6 text-amber-600" />} color="bg-white" />

@@ -1,0 +1,598 @@
+{
+  "entities": {
+    "Case": {
+      "title": "Case",
+      "description": "Represents a charity case (beneficiary)",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the case" },
+        "nationalId": { "type": "string", "description": "14-digit National ID" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "category": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "active", "completed"] },
+        "description": { "type": "string" },
+        "familyCount": { "type": "number" },
+        "spouseName": { "type": "string" },
+        "requestDate": { "type": "string", "format": "date" },
+        "addedBy": { "type": "string" },
+        "rating": { "type": "number" },
+        "researcherNotes": { "type": "string" },
+        "isPermanent": { "type": "boolean" },
+        "attachments": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "nationalId", "category", "status", "createdAt"]
+    },
+    "Donor": {
+      "title": "Donor",
+      "description": "Represents a charity donor",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "totalDonations": { "type": "number" },
+        "lastDonationDate": { "type": "string", "format": "date" },
+        "donationType": { "type": "string" },
+        "campaign": { "type": "string" },
+        "collectionStatus": { "type": "string", "enum": ["collected", "pending", "not_collected"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone", "collectionStatus", "createdAt"]
+    },
+    "IncomingDonation": {
+      "title": "Incoming Donation",
+      "description": "A donation received by the association",
+      "type": "object",
+      "properties": {
+        "donorName": { "type": "string" },
+        "phone": { "type": "string" },
+        "amount": { "type": "number" },
+        "quantity": { "type": "string" },
+        "type": { "type": "string", "enum": ["cash", "inkind"] },
+        "date": { "type": "string", "format": "date" },
+        "receiverName": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "itemDescription": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "disbursed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["donorName", "type", "date", "receiverName", "status", "createdAt"]
+    },
+    "OutgoingDonation": {
+      "title": "Outgoing Donation",
+      "description": "Aid disbursed by the association",
+      "type": "object",
+      "properties": {
+        "receiverName": { "type": "string" },
+        "amount": { "type": "number" },
+        "quantity": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "incomingId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["receiverName", "date", "description", "createdAt"]
+    },
+    "MonthlySponsorship": {
+      "title": "Monthly Sponsorship",
+      "description": "Monthly sponsorship tracking",
+      "type": "object",
+      "properties": {
+        "month": { "type": "number" },
+        "year": { "type": "number" },
+        "revenues": {
+          "type": "array",
+          "items": { 
+            "type": "object",
+            "properties": {
+              "donorName": { "type": "string" },
+              "phone": { "type": "string" },
+              "address": { "type": "string" },
+              "amount": { "type": "number" },
+              "isCollected": { "type": "boolean" },
+              "collectedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "expenses": {
+          "type": "array",
+          "items": { 
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "date": { "type": "string", "format": "date" },
+              "amount": { "type": "number" },
+              "receiverName": { "type": "string" },
+              "attachments": { 
+                "type": "array",
+                "items": { 
+                  "type": "object",
+                  "properties": {
+                    "url": { "type": "string" },
+                    "name": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["month", "year", "createdAt"]
+    },
+    "Activity": {
+      "title": "Activity",
+      "description": "Charity activity or event",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "location": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "date", "createdAt"]
+    },
+    "Volunteer": {
+      "title": "Volunteer",
+      "description": "Charity volunteer",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "age": { "type": "number" },
+        "skills": { "type": "string" },
+        "type": { "type": "string" },
+        "availability": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone", "createdAt"]
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "Fundraising campaign",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "targetAmount": { "type": "number" },
+        "collectedAmount": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "targetAmount", "createdAt"]
+    },
+    "Log": {
+      "title": "Log",
+      "description": "Security and activity log",
+      "type": "object",
+      "properties": {
+        "userEmail": { "type": "string" },
+        "action": { "type": "string" },
+        "device": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userEmail", "timestamp"]
+    },
+    "MedicalPrescription": {
+      "title": "Medical Prescription",
+      "description": "Medicine prescription for a case",
+      "type": "object",
+      "properties": {
+        "doctorName": { "type": "string" },
+        "clinicName": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "medicines": { "type": "string" },
+        "notes": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "isPublic": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["doctorName", "date", "createdAt"]
+    },
+    "MedicalSurgery": {
+      "title": "Medical Surgery",
+      "description": "Surgery record for a case",
+      "type": "object",
+      "properties": {
+        "hospitalName": { "type": "string" },
+        "doctorName": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "reportUrl": { "type": "string" },
+        "cost": { "type": "number" },
+        "status": { "type": "string", "enum": ["completed", "in_progress", "not_started"] },
+        "notes": { "type": "string" },
+        "isPublic": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["hospitalName", "date", "status", "createdAt"]
+    },
+    "MedicalLabTest": {
+      "title": "Medical Lab Test",
+      "description": "Laboratory test result",
+      "type": "object",
+      "properties": {
+        "testType": { "type": "string" },
+        "labName": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "resultUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["normal", "abnormal"] },
+        "isPublic": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["testType", "labName", "date", "status", "createdAt"]
+    },
+    "MedicalRadiology": {
+      "title": "Medical Radiology",
+      "description": "X-Ray or Scan record",
+      "type": "object",
+      "properties": {
+        "scanType": { "type": "string" },
+        "centerName": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "imageUrl": { "type": "string" },
+        "reportUrl": { "type": "string" },
+        "notes": { "type": "string" },
+        "isPublic": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["scanType", "centerName", "date", "createdAt"]
+    },
+    "MarriageCase": {
+      "title": "Marriage Case",
+      "description": "Information about marriage aid cases",
+      "type": "object",
+      "properties": {
+        "brideName": { "type": "string" },
+        "brideNationalId": { "type": "string" },
+        "guardianName": { "type": "string" },
+        "guardianNationalId": { "type": "string" },
+        "motherName": { "type": "string" },
+        "motherNationalId": { "type": "string" },
+        "phone1": { "type": "string" },
+        "phone2": { "type": "string" },
+        "address": { "type": "string" },
+        "marriageType": { "type": "string", "enum": ["official", "unofficial"] },
+        "weddingDate": { "type": "string" },
+        "requiredHelp": { "type": "string" },
+        "contractDate": { "type": "string" },
+        "notes": { "type": "string" },
+        "status": { "type": "string", "enum": ["completed", "in_progress", "not_started"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["brideName", "brideNationalId", "status", "createdAt"]
+    },
+    "DistributionList": {
+      "title": "Distribution List",
+      "description": "A list for distributing aid (food boxes, etc.)",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "type": { "type": "string", "enum": ["food", "meat", "clothes", "money", "other"] },
+        "notes": { "type": "string" },
+        "itemCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["draft", "active", "completed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "date", "type", "status", "createdAt"]
+    },
+    "DistributionListItem": {
+      "title": "Distribution List Item",
+      "description": "A beneficiary in a distribution list",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "nationalId": { "type": "string" },
+        "received": { "type": "boolean" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "received", "createdAt"]
+    },
+    "FinancialAccount": {
+      "title": "Financial Account",
+      "description": "A monetary account like Cash, Bank, or Vodafone Cash",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["cash", "vodafone_cash", "bank"] },
+        "balance": { "type": "number" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "type", "balance"]
+    },
+    "FinancialOperation": {
+      "title": "Financial Operation",
+      "description": "An income or expense transaction",
+      "type": "object",
+      "properties": {
+        "opNumber": { "type": "string" },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "date": { "type": "string", "format": "date" },
+        "amount": { "type": "number" },
+        "accountId": { "type": "string" },
+        "category": { "type": "string" },
+        "subCategory": { "type": "string" },
+        "donorInfo": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "phone": { "type": "string" },
+            "source": { "type": "string" }
+          }
+        },
+        "beneficiary": { "type": "string" },
+        "description": { "type": "string" },
+        "proofUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected", "executed"] },
+        "approval": {
+          "type": "object",
+          "properties": {
+            "requestedBy": { "type": "string" },
+            "reviewedBy": { "type": "string" },
+            "approvedBy": { "type": "string" },
+            "executedBy": { "type": "string" },
+            "updatedAt": { "type": "string", "format": "date-time" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "date", "amount", "accountId", "status", "createdAt"]
+    },
+    "AccountTransfer": {
+      "title": "Account Transfer",
+      "description": "Money transfer between accounts",
+      "type": "object",
+      "properties": {
+        "fromAccountId": { "type": "string" },
+        "toAccountId": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string", "format": "date" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fromAccountId", "toAccountId", "amount", "date", "createdAt"]
+    },
+    "MonthlyGoal": {
+      "title": "Monthly Goal",
+      "description": "Financial target for a specific month",
+      "type": "object",
+      "properties": {
+        "month": { "type": "number" },
+        "year": { "type": "number" },
+        "targetAmount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["month", "year", "targetAmount", "createdAt"]
+    },
+    "AppUser": {
+      "title": "Application User",
+      "description": "User account for the system with custom roles",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "manager", "accountant", "clerk"] },
+        "permissions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["username", "password", "name", "role", "active"]
+    },
+    "SacrificeCoupon": {
+      "title": "Sacrifice Coupon",
+      "description": "Donation for Udhiyah (Sacrifice) sacrifice coupons",
+      "type": "object",
+      "properties": {
+        "donorName": { "type": "string" },
+        "phone": { "type": "string" },
+        "amount": { "type": "number" },
+        "couponCount": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "isCollected": { "type": "boolean" },
+        "isContacted": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["donorName", "amount", "date", "createdAt"]
+    },
+    "AccountTransaction": {
+      "title": "Account Transaction",
+      "description": "A single transaction (income/expense) within a financial account",
+      "type": "object",
+      "properties": {
+        "accountId": { "type": "string" },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "date": { "type": "string", "format": "date" },
+        "amount": { "type": "number" },
+        "description": { "type": "string" },
+        "receiverName": { "type": "string" },
+        "sourceName": { "type": "string" },
+        "month": { "type": "number" },
+        "year": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["accountId", "type", "date", "amount", "description"]
+    },
+    "SeasonalDistribution": {
+      "title": "Seasonal Distribution",
+      "description": "Represents a seasonal aid distribution event (e.g. Ramadan boxes, Udhiyah meat)",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "organization": { "type": "string" },
+        "otherOrgName": { "type": "string" },
+        "distType": { "type": "string" },
+        "otherDistType": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "notes": { "type": "string" },
+        "beneficiaryCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "organization", "distType", "date", "createdAt"]
+    },
+    "SeasonalBeneficiary": {
+      "title": "Seasonal Beneficiary",
+      "description": "A beneficiary within a seasonal distribution list",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "nationalId": { "type": "string" },
+        "phone": { "type": "string" },
+        "village": { "type": "string" },
+        "quantity": { "type": "number" },
+        "collected": { "type": "boolean" },
+        "notes": { "type": "string" },
+        "distributionId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "nationalId", "createdAt"]
+    },
+    "RamadanDonation": {
+      "title": "Ramadan Donation",
+      "description": "Donation for Ramadan campaigns (bags, meals)",
+      "type": "object",
+      "properties": {
+        "donorName": { "type": "string" },
+        "phone": { "type": "string" },
+        "amount": { "type": "number" },
+        "donationType": { "type": "string", "enum": ["cash", "inkind"] },
+        "itemType": { "type": "string", "enum": ["money", "commodity"] },
+        "campaignType": { "type": "string", "enum": ["bag", "meals"] },
+        "date": { "type": "string", "format": "date" },
+        "isCollected": { "type": "boolean" },
+        "isContacted": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["donorName", "amount", "date", "createdAt"]
+    },
+    "OrphanCase": {
+      "title": "Orphan Case",
+      "description": "Sponsorship case for orphans",
+      "type": "object",
+      "properties": {
+        "caseCode": { "type": "string" },
+        "guardianName": { "type": "string" },
+        "guardianId": { "type": "string" },
+        "orphans": { "type": "array", "items": { "type": "object" } },
+        "isSponsored": { "type": "boolean" },
+        "sponsorshipAmount": { "type": "number" },
+        "phone1": { "type": "string" },
+        "phone2": { "type": "string" },
+        "markaz": { "type": "string" },
+        "village": { "type": "string" },
+        "address": { "type": "string" },
+        "filesStatus": { "type": "string" },
+        "researchFormStatus": { "type": "string" },
+        "submissionStatus": { "type": "string" },
+        "registrationPlace": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["guardianName", "orphans", "createdAt"]
+    },
+    "NewOrphanRegistration": {
+      "title": "New Orphan Registration",
+      "description": "Registry for new orphan cases being processed",
+      "type": "object",
+      "properties": {
+        "guardianName": { "type": "string" },
+        "guardianId": { "type": "string" },
+        "orphanName": { "type": "string" },
+        "orphanId": { "type": "string" },
+        "phone1": { "type": "string" },
+        "phone2": { "type": "string" },
+        "markaz": { "type": "string" },
+        "village": { "type": "string" },
+        "address": { "type": "string" },
+        "isFilesRegistered": { "type": "boolean" },
+        "isFormDone": { "type": "boolean" },
+        "isSent": { "type": "boolean" },
+        "missingFiles": { "type": "array", "items": { "type": "string" } },
+        "sendingAuthority": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["guardianName", "orphanName", "createdAt"]
+    },
+    "School": {
+      "title": "School",
+      "description": "Represents a school for the top students ceremony",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "supervisorName": { "type": "string" },
+        "supervisorPhone": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "createdAt"]
+    },
+    "TopStudent": {
+      "title": "Top Student",
+      "description": "Represents an outstanding student participating in the ceremony",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "totalMarks": { "type": "number" },
+        "percentage": { "type": "number" },
+        "grade": { "type": "string" },
+        "schoolId": { "type": "string" },
+        "schoolName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "schoolId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "schools": { "schema": "School", "description": "Schools participating in the top students ceremony" },
+    "top_students": { "schema": "TopStudent", "description": "Outstanding students participating in the ceremony" },
+    "orphans": { "schema": "OrphanCase", "description": "Orphan sponsorship cases" },
+    "new_orphan_registrations": { "schema": "NewOrphanRegistration", "description": "New orphan case applications" },
+    "marriageCases": { "schema": "MarriageCase", "description": "Marriage aid applications" },
+    "cases": { "schema": "Case", "description": "Beneficiary cases" },
+    "cases/{caseId}/prescriptions": { "schema": "MedicalPrescription", "description": "Case prescriptions" },
+    "cases/{caseId}/surgeries": { "schema": "MedicalSurgery", "description": "Case surgeries" },
+    "cases/{caseId}/labTests": { "schema": "MedicalLabTest", "description": "Case lab tests" },
+    "cases/{caseId}/radiology": { "schema": "MedicalRadiology", "description": "Case radiology scans" },
+    "donors": { "schema": "Donor", "description": "Charity donors" },
+    "activities": { "schema": "Activity", "description": "Documented charity activities" },
+    "volunteers": { "schema": "Volunteer", "description": "Volunteer registry" },
+    "campaigns": { "schema": "Campaign", "description": "Fundraising campaigns" },
+    "distributionLists": { "schema": "DistributionList", "description": "Aid distribution lists" },
+    "distributionLists/{listId}/items": { "schema": "DistributionListItem", "description": "Items in a distribution list" },
+    "financial_accounts": { "schema": "FinancialAccount", "description": "Balances for different payment methods" },
+    "account_transactions": { "schema": "AccountTransaction", "description": "Transactions within financial accounts" },
+    "financial_operations": { "schema": "FinancialOperation", "description": "All financial transactions" },
+    "account_transfers": { "schema": "AccountTransfer", "description": "Internal money transfers" },
+    "incoming_donations": { "schema": "IncomingDonation", "description": "All incoming donations (cash/inkind)" },
+    "outgoing_donations": { "schema": "OutgoingDonation", "description": "All outgoing donations (cash/inkind)" },
+    "monthly_sponsorships": { "schema": "MonthlySponsorship", "description": "Monthly records for the sponsorship system" },
+    "monthly_goals": { "schema": "MonthlyGoal", "description": "Targets for fundraising" },
+    "app_users": { "schema": "AppUser", "description": "System users and their permissions" },
+    "sacrifice_coupons": { "schema": "SacrificeCoupon", "description": "Sacrifice (Udhiyah) coupon donor records" },
+    "ramadan_campaign": { "schema": "RamadanDonation", "description": "Donations for Ramadan specific campaigns" },
+    "seasonal_distributions": { "schema": "SeasonalDistribution", "description": "Seasonal aid distribution lists and events" },
+    "seasonal_distributions/{distId}/beneficiaries": { "schema": "SeasonalBeneficiary", "description": "Beneficiaries in a seasonal distribution event" },
+    "logs": { "schema": "Log", "description": "Security activity logs" }
+  }
+}

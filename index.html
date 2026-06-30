@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Google AI Studio App</title>
+    <script>
+      // Global fix for html2canvas + Tailwind 4 (oklch/oklab)
+      // html2canvas fails when parsing modern color functions.
+      // Global fix for html2canvas + Tailwind 4 (oklch/oklab)
+      // This monkey-patch ensures it only sees standard RGB/Hex values.
+      (function() {
+        const originalGCS = window.getComputedStyle;
+        window.getComputedStyle = function(el, pseudo) {
+          const style = originalGCS(el, pseudo);
+          if (!style) return style;
+          return new Proxy(style, {
+            get(target, prop) {
+              const val = target[prop];
+              if (typeof val === 'function') {
+                return val.bind(target);
+              }
+              if (typeof val === 'string') {
+                if (val.includes('oklch') || val.includes('oklab')) {
+                  return 'rgb(0, 0, 0)'; 
+                }
+              }
+              return val;
+            }
+          });
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
