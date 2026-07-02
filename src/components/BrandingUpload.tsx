@@ -5,29 +5,45 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../lib/firebase';
 
 export async function uploadFile(file: File, storagePath: string): Promise<string> {
-  const storageRef = ref(storage, storagePath);
-  const metadata = {
-    contentType: file.type || 'image/jpeg'
-  };
-  const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-  
-  return new Promise<string>((resolve, reject) => {
-    uploadTask.on('state_changed', 
-      null,
-      (error) => {
-        console.error("Firebase upload error:", error);
-        reject(new Error('فشل الرفع عبر Firebase: ' + error.message));
-      },
-      async () => {
-        try {
-          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(downloadUrl);
-        } catch (err: any) {
-          reject(new Error('فشل الحصول على رابط التحميل: ' + err.message));
+  try {
+    const storageRef = ref(storage, storagePath);
+    const metadata = {
+      contentType: file.type || 'image/jpeg'
+    };
+    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+    
+    return await new Promise<string>((resolve, reject) => {
+      uploadTask.on('state_changed', 
+        null,
+        (error) => {
+          console.error("Firebase upload error, falling back to local Base64:", error);
+          reject(error);
+        },
+        async () => {
+          try {
+            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+            resolve(downloadUrl);
+          } catch (err: any) {
+            reject(err);
+          }
         }
-      }
-    );
-  });
+      );
+    });
+  } catch (err) {
+    console.warn("Firebase storage upload failed or not configured, reading file as Base64 data URL instead...", err);
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          resolve(reader.result);
+        } else {
+          reject(new Error('فشل قراءة الملف كـ Base64'));
+        }
+      };
+      reader.onerror = () => reject(new Error('فشل قراءة الملف'));
+      reader.readAsDataURL(file);
+    });
+  }
 }
 
 function setFavicon(url: string) {
